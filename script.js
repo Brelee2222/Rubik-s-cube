@@ -13,8 +13,12 @@ const PIECE_TYPES = [
     "corner" // 3 colors
 ];
 
+var g;
+
 const SCENE = document.getElementById("main-scene");
 const CUBE_TEMPLATE = document.getElementById("cubePiece").content;
+
+const pieces = [];
 
 class CubePiece {
     element; // readonly
@@ -29,17 +33,15 @@ class CubePiece {
         
         this.type = PIECE_TYPES[this.colors.length - 1];
 
-        this.element = CUBE_TEMPLATE.cloneNode(true);
+        this.element = document.importNode(CUBE_TEMPLATE, true);
 
         let currentFace = this.element;
-        console.log(this.element);
-        for(const color of this.colors) {
-            console.log(color);
-            console.log(currentFace);
-            currentFace.color = color;
-            currentFace = currentFace.childNodes[0];
-        }
+        for(const color of this.colors) (currentFace = currentFace.firstElementChild).setAttribute("color", color);
 
         SCENE.appendChild(this.element);
+
+        console.log(`created piece\n    type:${this.type}\n    colors:${this.colors}`);
+
+        pieces.push(this);
     }
 }
