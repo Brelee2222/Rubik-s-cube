@@ -13,8 +13,6 @@ const PIECE_TYPES = [
     "corner" // 3 colors
 ];
 
-var g;
-
 const SCENE = document.getElementById("main-scene");
 const CUBE_TEMPLATE = document.getElementById("cubePiece").content;
 
@@ -26,7 +24,13 @@ class CubePiece {
     colors; // readonly
     type; // readonly
 
-    constructor(...colors) {
+    position;
+
+    orientation;
+
+    constructor(orientation, position, ...colors) {
+        this.orientation = orientation,
+        this.position = position,
         this.colors = colors
             .map(color => COLORS[color])
             .filter(color => color != undefined);
@@ -35,8 +39,8 @@ class CubePiece {
 
         this.element = document.importNode(CUBE_TEMPLATE, true);
 
-        let currentFace = this.element;
-        for(const color of this.colors) (currentFace = currentFace.firstElementChild).setAttribute("color", color);
+        const faces = this.element.firstElementChild.children;
+        for(let index = 0; index < this.colors.length; index++) faces[index].setAttribute("color", this.colors[index]);
 
         SCENE.appendChild(this.element);
 
@@ -45,3 +49,5 @@ class CubePiece {
         pieces.push(this);
     }
 }
+
+new CubePiece(0, {x : 0, y : 0, z : 0}, "red", "blue", "green");
