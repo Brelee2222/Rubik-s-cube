@@ -53,35 +53,48 @@ class CubePiece {
 }
 
 function createCube() {
-    new CubePiece(0, {x : 0, y : 0, z : 1}, "red", "orange", "green");
-    new CubePiece(0, {x : 1, y : 0, z : 1}, "red", "orange");
-    new CubePiece(0, {x : 2, y : 0, z : 1}, "red", "blue", "orange");
-    new CubePiece(0, {x : 2, y : 1, z : 1}, "red", "blue");
-    new CubePiece(0, {x : 1, y : 1, z : 1}, "red");
+    new CubePiece(0, {x : 0, y : 1, z : 0}, "red", "green");
+    new CubePiece(0, {x : 0, y : 0, z : 0}, "red", "green", "white");
+    new CubePiece(0, {x : 1, y : 0, z : 0}, "red", "white");
+    new CubePiece(0, {x : 2, y : 0, z : 0}, "red", "white", "blue");
+    new CubePiece(0, {x : 2, y : 1, z : 0}, "red", "blue");
+    new CubePiece(0, {x : 1, y : 1, z : 0}, "red");
+    new CubePiece(0, {x : 2, y : 2, z : 0}, "red", "blue", "yellow");
+    new CubePiece(0, {x : 0, y : 2, z : 0}, "red", "yellow", "green");
+    new CubePiece(0, {x : 1, y : 2, z : 0}, "red", "yellow");
+    new CubePiece(0, {x : 0, y : 0, z : 1}, "green", "white");
+    new CubePiece(0, {x : 0, y : 2, z : 1}, "green", "yellow");
+    new CubePiece(0, {x : 2, y : 0, z : 1}, "green", "white");
+    new CubePiece(0, {x : 2, y : 2, z : 1}, "green", "yellow");
+    // new CubePiece(0, {x : 0, y : 0, z : 2}, "yellow", "white", "green");
 }
 
 function updateCube() {
     for(const piece of pieces) {
         piece.element.setAttribute("position", `${piece.position.x} ${piece.position.y} ${piece.position.z}`);
         
-        const rotation = {x : 0, y : 0, z : 0};
+        const rotation = [0, 0, 0];
 
-        if(piece.position.z == 0)
-            rotation.y = -90;
-        else if(piece.position.z == CUBE_SIZE)
-            rotation.y = 90;
+        if(piece.position.x == CUBE_SIZE - 1) {
+            rotation[2] = 0;
+        } else if(piece.position.x != 0) {
+            rotation[2] = 90;
+            // rotation[0] = -90;
+        }
 
-        if(piece.position.x == 0)
-            rotation.z = -90;
-        else if(piece.position.x == CUBE_SIZE)
-            rotation.z = 90;
+        // if(piece.position.y > 0) {
+        //     rotation[1] = 90;
 
-        if(piece.position.y == 0)
-            rotation.x = -90;
-        else if(piece.position.y == CUBE_SIZE)
-            rotation.x = 90;
+        //     if(piece.position.z > 0) {
+        //         rotation[1] += 90;
+        //     }
+        // }
 
-        piece.element.setAttribute("rotation", `${rotation.x} ${rotation.y} ${rotation.z}`)
+        // if(piece.position.z == CUBE_SIZE - 1 && piece.position.y != CUBE_SIZE - 1) {
+        //     rotation[1] = -90;
+        // }
+
+        piece.element.setAttribute("rotation", `${rotation[0]} ${rotation[1]} ${rotation[2]}`)
     }
 }
 
