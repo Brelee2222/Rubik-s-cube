@@ -8,16 +8,38 @@ const COLORS = {
 };
 
 const PIECE_TYPES = [
-    "middle", // 1 face
-    "edge", // 2 faces
-    "corner" // 3 faces
+    "middle", // 1 color
+    "edge", // 2 colors
+    "corner" // 3 colors
 ];
 
 const SCENE = document.getElementById("main-scene");
 const CUBE_TEMPLATE = document.getElementById("cubePiece").content;
 
 class CubePiece {
-    constructor() {
+    element; // readonly
+
+    colors; // readonly
+    type; // readonly
+
+    constructor(...colors) {
+        this.colors = colors
+            .map(color => COLORS[color])
+            .filter(color => color != undefined);
         
+        this.type = PIECE_TYPES[this.colors.length - 1];
+
+        this.element = CUBE_TEMPLATE.cloneNode(true);
+
+        let currentFace = this.element;
+        console.log(this.element);
+        for(const color of this.colors) {
+            console.log(color);
+            console.log(currentFace);
+            currentFace.color = color;
+            currentFace = currentFace.childNodes[0];
+        }
+
+        SCENE.appendChild(this.element);
     }
 }
