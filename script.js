@@ -42,7 +42,7 @@ class CubePiece {
         this.element = document.importNode(CUBE_TEMPLATE, true).firstElementChild;
 
         const faces = this.element.children;
-        for(let index = 0; index < this.colors.length; index++) faces[index].setAttribute("color", this.colors[index]);
+        for(let index = 0; index < this.colors.length; index++) faces[2-index].setAttribute("color", this.colors[index]);
 
         CUBE_ENTITY.appendChild(this.element);
 
@@ -53,19 +53,21 @@ class CubePiece {
 }
 
 function createCube() {
-    new CubePiece(0, {x : 0, y : 1, z : 0}, "red", "green");
-    new CubePiece(0, {x : 0, y : 0, z : 0}, "red", "green", "white");
-    new CubePiece(0, {x : 1, y : 0, z : 0}, "red", "white");
-    new CubePiece(0, {x : 2, y : 0, z : 0}, "red", "white", "blue");
-    new CubePiece(0, {x : 2, y : 1, z : 0}, "red", "blue");
+    new CubePiece(0, {x : 0, y : 1, z : 0}, "green", "red");
+    new CubePiece(0, {x : 0, y : 0, z : 0}, "white", "red", "green");
+    new CubePiece(0, {x : 1, y : 0, z : 0}, "white", "red");
+    new CubePiece(0, {x : 2, y : 0, z : 0}, "blue", "white", "red");
+    new CubePiece(0, {x : 2, y : 1, z : 0}, "blue", "red");
     new CubePiece(0, {x : 1, y : 1, z : 0}, "red");
-    new CubePiece(0, {x : 2, y : 2, z : 0}, "red", "blue", "yellow");
+    new CubePiece(0, {x : 2, y : 2, z : 0}, "yellow", "blue", "red");
+    new CubePiece(0, {x : 0, y : 2, z : 2}, "yellow", "orange", "green");
     new CubePiece(0, {x : 0, y : 2, z : 0}, "red", "yellow", "green");
+    new CubePiece(0, {x : 0, y : 1, z : 2}, "green", "orange");
     new CubePiece(0, {x : 1, y : 2, z : 0}, "red", "yellow");
     new CubePiece(0, {x : 0, y : 0, z : 1}, "green", "white");
     new CubePiece(0, {x : 0, y : 2, z : 1}, "green", "yellow");
-    new CubePiece(0, {x : 2, y : 0, z : 1}, "green", "white");
-    new CubePiece(0, {x : 2, y : 2, z : 1}, "green", "yellow");
+    new CubePiece(0, {x : 0, y : 1, z : 1}, "green");
+    new CubePiece(0, {x : 1, y : 2, z : 1}, "yellow");
     // new CubePiece(0, {x : 0, y : 0, z : 2}, "yellow", "white", "green");
 }
 
@@ -74,24 +76,20 @@ function updateCube() {
         piece.element.setAttribute("position", `${piece.position.x} ${piece.position.y} ${piece.position.z}`);
         
         const rotation = [0, 0, 0];
+        // if((piece.position.z % (CUBE_SIZE-1)) != 0 || (piece.position.y % (CUBE_SIZE-1)) != 0) 
+        //     rotation[2] += -90;
+        
+        // if(piece.type === "middle")
+        //     rotation[1] -= 90 * piece.position.x;
 
-        if(piece.position.x == CUBE_SIZE - 1) {
-            rotation[2] = 0;
-        } else if(piece.position.x != 0) {
-            rotation[2] = 90;
-            // rotation[0] = -90;
-        }
-
-        // if(piece.position.y > 0) {
-        //     rotation[1] = 90;
-
-        //     if(piece.position.z > 0) {
-        //         rotation[1] += 90;
+        // if(piece.position.z > 0 || piece.position.y == CUBE_SIZE - 1) {
+        //     rotation[0] += 90;
+        //     if(piece.position.y < CUBE_SIZE - 1 || piece.position.z == CUBE_SIZE - 1) {
+        //         rotation[0] += 90;
+        //         if(piece.position.y == 0) {
+        //             rotation[0] += 90;
+        //         }
         //     }
-        // }
-
-        // if(piece.position.z == CUBE_SIZE - 1 && piece.position.y != CUBE_SIZE - 1) {
-        //     rotation[1] = -90;
         // }
 
         piece.element.setAttribute("rotation", `${rotation[0]} ${rotation[1]} ${rotation[2]}`)
