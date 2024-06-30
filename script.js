@@ -4,7 +4,8 @@ const COLORS = {
     "white" : "white",
     "green" : "green",
     "orange" : "orange",
-    "yellow" : "yellow"
+    "yellow" : "yellow",
+    null : "gray"
 };
 
 const PIECE_TYPES = [
@@ -16,11 +17,11 @@ const PIECE_TYPES = [
 const CUBE_ENTITY = document.getElementById("cube-entity");
 const CUBE_TEMPLATE = document.getElementById("cubePiece").content;
 
-const CUBE_SIZE = 3;
-
 const AXES = ["x", "y", "z"];
 
-const pieces = [];
+let cubeSize = 3;
+
+let pieces = [];
 
 class CubePiece {
     element; // readonly
@@ -39,7 +40,7 @@ class CubePiece {
             .map(color => COLORS[color])
             .filter(color => color != undefined);
         
-        this.type = PIECE_TYPES[this.colors.length - 1];
+        this.type = this.colors.length;
 
         this.element = document.importNode(CUBE_TEMPLATE, true).firstElementChild;
 
@@ -72,26 +73,28 @@ function createCube() {
 
     const sideColors = ["white", "blue", "red", "yellow", "green", "orange"];
 
-    for(let x = 0; x < CUBE_SIZE; x++) {
-        for(let z = 0; z < CUBE_SIZE; z++) {
-            for(let y = 0; y < CUBE_SIZE; y++) {
+    for(let x = 0; x < cubeSize; x++) {
+        for(let z = 0; z < cubeSize; z++) {
+            for(let y = 0; y < cubeSize; y++) {
 
-                const colors = [];
+                const colors = [null, null, null];
 
                 if(x == 0)
-                    colors.push(sideColors[0]);
-                else if(x == CUBE_SIZE - 1)
-                    colors.push(sideColors[3]);
+                    colors[0] = sideColors[0];
+                else if(x == cubeSize - 1)
+                    colors[0] = sideColors[3];
 
                 if(y == 0)
-                    colors.push(sideColors[1]);
-                else if(y == CUBE_SIZE - 1)
-                    colors.push(sideColors[4]);
+                    colors[1] = sideColors[1];
+                else if(y == cubeSize - 1)
+                    colors[1] = sideColors[4];
 
                 if(z == 0)
-                    colors.push(sideColors[2]);
-                else if(z == CUBE_SIZE - 1)
-                    colors.push(sideColors[5]);
+                    colors[2] = sideColors[2];
+                else if(z == cubeSize - 1)
+                    colors[2] = sideColors[5];
+
+                console.log(colors)
 
                 new CubePiece(0, {x, y, z}, ...colors);
             }
@@ -104,29 +107,43 @@ function updateCube() {
         piece.element.setAttribute("position", `${piece.position.x} ${piece.position.y} ${piece.position.z}`);
 
         // const faces = piece.element.children;
+        for(let index = 0; index < piece.colors.length; index++) {
+            if(piece.colors[index] == "gray")
+                continue;
 
-        let colorsIndex = 0;
-        for(let index = AXES.length-1; colorsIndex != piece.colors.length; index--) {
             if(piece.position[AXES[index]] == 0) {
-                piece.element.children[index + 3].setAttribute("color", piece.colors[colorsIndex++]);
-            } else if(piece.position[AXES[index]] == CUBE_SIZE - 1) {
-                piece.element.children[index].setAttribute("color", piece.colors[colorsIndex++]);
+                piece.element.children[index + 3].setAttribute("color", piece.colors[index]);
+            } else if(piece.position[AXES[index]] == cubeSize - 1) {
+                piece.element.children[index].setAttribute("color", piece.colors[index]);
             }
         }
     }
 }
 
-function rotate(axis, row, clockwise) {
+function rotate(axis, row) {
     pieces.filter(piece => piece.position[axis] == row).forEach(piece => {
-        if(["y", "x", "z"].indexOf(axis) != piece.orientation)
-            piece.orientation = piece.orientation ^ ["y", "z", "x"].indexOf(axis);
+        const otherAxes = AXES.filter(otherAxis => otherAxis != axis);
 
-        const otherAxes = ["y", "x", "z"].filter(otherAxis => otherAxis != axis);
+        let tempColor = piece.colors[AXES.indexOf(otherAxes[otherAxes.length-1])];
+
+        // if(piece.type == 3)
+        otherAxes.forEach(axis => {
+            const temp = piece.colors[AXES.indexOf(axis)];
+            piece.colors[AXES.indexOf(axis)] = tempColor;
+            tempColor = temp;
+        })
 
         const temp = piece.position[otherAxes[0]];
-        piece.position[otherAxes[0]] = CUBE_SIZE - 1 - piece.position[otherAxes[1]];
+        piece.position[otherAxes[0]] = cubeSize - 1 - piece.position[otherAxes[1]];
         piece.position[otherAxes[1]] = temp;
     });
+}
+
+function rotateSide(axis, row, clockwise = true) {
+    rotate(axis, row);
+    if(!clockwise) for(let rep = 0; rep < 2; rep++)
+        rotate(axis, row);
+
     updateCube();
 }
 
