@@ -6,23 +6,52 @@
         <title>Rubik's cube</title>
         <link href="style.css" rel="stylesheet" type="text/css" />
         <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
-        <script src="script.js" defer></script>
+        <script src="cube.js" defer></script>
+        <script src="controls.js" defer></script>
     </head>
 
     <body>
         <template id="cubePiece">
             <a-entity position="0 0 0">
-                <a-plane color="grey" rotation="0 90 0" position=".5 0 0"></a-plane>
-                <a-plane color="grey" rotation="-90 0 0" position="0 .5 0"></a-plane>
-                <a-plane color="grey" rotation="0 0 0" position="0 0 .5"></a-plane>
-                <a-plane color="grey" rotation="0 -90 0" position="-.5 0 0"></a-plane>
-                <a-plane color="grey" rotation="90 0 0" position="0 -.5 0"></a-plane>
-                <a-plane color="grey" rotation="0 180 0" position="0 0 -.5"></a-plane>
+                <a-plane width="0.9" height="0.9" color="grey" rotation="0 90 0" position=".5 0 0"></a-plane>
+                <a-plane width="0.9" height="0.9" color="grey" rotation="-90 0 0" position="0 .5 0"></a-plane>
+                <a-plane width="0.9" height="0.9" color="grey" rotation="0 0 0" position="0 0 .5"></a-plane>
+                <a-plane width="0.9" height="0.9" color="grey" rotation="0 -90 0" position="-.5 0 0"></a-plane>
+                <a-plane width="0.9" height="0.9" color="grey" rotation="90 0 0" position="0 -.5 0"></a-plane>
+                <a-plane width="0.9" height="0.9" color="grey" rotation="0 180 0" position="0 0 -.5"></a-plane>
             </a-entity>
         </template>
+        <button id="scramble">scramble</button>
+        <div>
+            <label>
+                <input type="range" min="2" max="10" value="3" id="size-select">Cube Size
+            </label>
+        </div>
+        <div>
+            Axis
+            <select id="axis">
+                <option value="x">x</option>
+                <option value="y">y</option>
+                <option value="z">z</option>
+            </select>
 
-        <a-scene id="main-scene">
-            <a-entity id="cube-entity" position="0 3 0">
+            <label>
+                <input type="range" min="0" max="2" value="0" id="depth">Depth
+                <span id="depthNumber">0</span>
+            </label>
+            <label>
+                <input type="checkbox" id="clockwise" checked>Clockwise
+            </label>
+        </div>  
+        <button id="turn">Turn</button>
+        <a-scene id="main-scene" embedded style="height: 75vh; width:75vw">
+            <a-entity id="cube-entity" position="0 0 0">
+                <a-box width="50" depth="0.05" height="0.05" position="0 -.5 -.5" color="blue"></a-text>
+                <a-box height="50" depth="0.05" width="0.05" position="-.5 0 0" color="red"></a-text>
+                <a-box depth="50" width="0.05" height="0.05" position="0 0 0" color="green"></a-text>
+                <a-entity look-controls position="1 1 1" id="cam-anchor">
+                    <a-entity camera fov="360" position="0 0 5" id="cam"></a-entity>
+                </a-entity>
             </a-entity>
         </a-scene>
 

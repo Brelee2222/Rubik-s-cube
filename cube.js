@@ -26,15 +26,12 @@ let pieces = [];
 class CubePiece {
     element; // readonly
 
-    colors; // readonly
+    colors;
     type; // readonly
 
     position;
 
-    orientation;
-
-    constructor(orientation, position, ...colors) {
-        this.orientation = orientation,
+    constructor(position, ...colors) {
         this.position = position,
         this.colors = colors
             .map(color => COLORS[color])
@@ -46,7 +43,7 @@ class CubePiece {
 
         CUBE_ENTITY.appendChild(this.element);
 
-        console.log(`created piece\n    type:${this.type}\n    colors:${this.colors}`);
+        // console.log(`created piece\n    type:${this.type}\n    colors:${this.colors}`);
 
         pieces.push(this);
     }
@@ -71,6 +68,9 @@ function createCube() {
     // new CubePiece(0, {x : 0, y : 0, z : 1}, "white", "red");
     // new CubePiece(0, {x : 0, y : 0, z : 2}, "white", "green");
 
+    pieces.forEach(piece => piece.element.remove());
+    pieces = [];
+
     const sideColors = ["white", "blue", "red", "yellow", "green", "orange"];
 
     for(let x = 0; x < cubeSize; x++) {
@@ -94,30 +94,33 @@ function createCube() {
                 else if(z == cubeSize - 1)
                     colors[2] = sideColors[5];
 
-                console.log(colors)
+                // console.log(colors)
 
-                new CubePiece(0, {x, y, z}, ...colors);
+                new CubePiece({x, y, z}, ...colors);
             }
         }
     }
 }
 
-function updateCube() {
-    for(const piece of pieces) {
-        piece.element.setAttribute("position", `${piece.position.x} ${piece.position.y} ${piece.position.z}`);
+async function updatePiece(piece) {
+    piece.element.setAttribute("position", `${piece.position.x} ${piece.position.y} ${piece.position.z}`);
+    for(const face of piece.element.children) face.setAttribute("color", "gray");
+    // const faces = piece.element.children;
+    for(let index = 0; index < piece.colors.length; index++) {
+        if(piece.colors[index] == "gray")
+            continue;
 
-        // const faces = piece.element.children;
-        for(let index = 0; index < piece.colors.length; index++) {
-            if(piece.colors[index] == "gray")
-                continue;
-
-            if(piece.position[AXES[index]] == 0) {
-                piece.element.children[index + 3].setAttribute("color", piece.colors[index]);
-            } else if(piece.position[AXES[index]] == cubeSize - 1) {
-                piece.element.children[index].setAttribute("color", piece.colors[index]);
-            }
+        if(piece.position[AXES[index]] == 0) {
+            piece.element.children[index + 3].setAttribute("color", piece.colors[index]);
+        } else if(piece.position[AXES[index]] == cubeSize - 1) {
+            piece.element.children[index].setAttribute("color", piece.colors[index]);
         }
     }
+}
+
+function updateCube() {
+    for(const piece of pieces)
+        updatePiece(piece);
 }
 
 function rotate(axis, row) {
@@ -145,6 +148,16 @@ function rotateSide(axis, row, clockwise = true) {
         rotate(axis, row);
 
     updateCube();
+}
+
+function setSize(size) {
+    cubeSize = Math.floor(size);
+    createCube();
+    updateCube();
+
+    document.getElementById("depth").max = size - 1;
+    document.getElementById("cam-anchor").setAttribute("position", `${size / 2 - 0.5} ${size / 2 - 0.5} ${size / 2 - 0.5}`)
+    document.getElementById("cam").setAttribute("position", `0 0 ${5/3 * size}`)
 }
 
 createCube();
